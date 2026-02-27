@@ -1,59 +1,342 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PHP_Laravel12_Geocoder
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+## Project Description
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+PHP_Laravel12_Geocoder is a Laravel 12 based geocoding application that converts human-readable addresses into geographic coordinates such as latitude and longitude using the OpenStreetMap Nominatim API.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+This project demonstrates how to integrate geocoding functionality in Laravel without using paid services like Google Maps. It uses the Geocoder PHP library with the Nominatim provider and Guzzle HTTP client to fetch accurate location data.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The application accepts an address as input and returns detailed location information including display name, coordinates, country, postal code, and full raw response in JSON format.
 
-## Learning Laravel
+This project is useful for learning geocoding concepts, Laravel API integration, and working with external location services.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Features
 
-## Laravel Sponsors
+- Convert address into latitude and longitude
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Fetch complete location details
 
-### Premium Partners
+- Uses free OpenStreetMap API (no billing required)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- RESTful API response in JSON format
 
-## Contributing
+- Clean and structured Laravel project
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Beginner-friendly implementation
 
-## Code of Conduct
+- No Google Maps API key required
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- Fast and accurate geocoding results
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
+## Technologies Used
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- PHP 8.2+
+
+- Laravel 12
+
+- Composer
+
+- MySQL
+
+- Geocoder PHP Library
+
+- Nominatim Provider (OpenStreetMap)
+
+- Guzzle HTTP Client
+
+- REST API
+
+- JSON
+
+
+
+---
+
+
+
+## Installation Steps
+
+
+---
+
+
+## STEP 1: Create Laravel 12 Project
+
+### Open terminal / CMD and run:
+
+```
+composer create-project laravel/laravel PHP_Laravel12_Geocoders "12.*"
+
+```
+
+### Go inside project:
+
+```
+cd PHP_Laravel12_Geocoders
+
+```
+
+#### Explanation:
+
+Installs a fresh Laravel 12 project and navigates into the project folder.
+
+
+
+
+
+## STEP 2: Database Setup 
+
+### Generate key:
+
+```
+php artisan key:generate
+
+```
+
+### Update database details:
+
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel12_geocoder
+DB_USERNAME=root
+DB_PASSWORD=
+
+```
+
+### Create database in MySQL / phpMyAdmin:
+
+```
+Database name: laravel12_geocoder
+
+```
+
+#### Explanation:
+
+Create the database laravel12_geocoder in MySQL / phpMyAdmin.
+
+This connects your Laravel app to MySQL to store any future data.
+
+
+
+
+
+## STEP 3: Install Geocoder Packages
+
+### Install the package:
+
+```
+composer require geocoder-php/nominatim-provider guzzlehttp/guzzle php-http/message
+
+```
+
+#### Explanation:
+
+Installs the Nominatim provider and Guzzle HTTP client for geocoding.
+
+
+
+
+
+
+## STEP 4: Publish Config File
+
+### This command publishes the geocoder config:
+
+```
+php artisan vendor:publish --provider="Geocoder\Laravel\Providers\GeocoderService"
+
+```
+
+### You’ll now have:
+
+```
+config/geocoder.php
+
+```
+
+
+#### Explanation:
+
+This allows you to configure your geocoder settings like provider URL and locale.
+
+
+
+
+
+## STEP 5: Configure Nominatim
+
+
+### Then edit config/geocoder.php:
+
+```
+<?php
+
+use Geocoder\Provider\Nominatim\Nominatim;
+use Http\Adapter\Curl\Client as CurlAdapter;
+
+return [
+
+    'cache-duration' => 9999999,
+
+    'providers' => [
+        Nominatim::class => [
+            'root_url' => 'https://nominatim.openstreetmap.org/',
+            'user_agent' => 'LaravelGeocoderTest', // required by Nominatim
+            'locale' => 'en',
+        ],
+    ],
+
+    'adapter' => CurlAdapter::class,
+];
+
+
+```
+
+#### Explanation:
+
+Configures Nominatim as the geocoding provider and sets a user agent (required by Nominatim API).
+
+
+
+
+## STEP 6: Create Controller
+
+### Make a controller:
+
+```
+php artisan make:controller GeocodersController
+
+```
+
+### In app/Http/Controllers/GeocodersController.php:
+
+```
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Geocoder\Provider\Nominatim\Nominatim;
+use Geocoder\Query\GeocodeQuery;
+use Geocoder\StatefulGeocoder;
+use GuzzleHttp\Client as GuzzleClient;
+
+class GeocodersController extends Controller
+{
+    public function index(Request $request)
+    {
+        $address = $request->get('address', 'Eiffel Tower');
+
+        // Initialize Guzzle client
+        $guzzle = new GuzzleClient();
+
+        // Initialize Nominatim provider
+        $provider = Nominatim::withOpenStreetMapServer($guzzle, 'LaravelGeocoderApp');
+
+        // Initialize Geocoder
+        $geocoder = new StatefulGeocoder($provider, 'en');
+
+        // Geocode address
+        $results = $geocoder->geocodeQuery(GeocodeQuery::create($address));
+
+        if ($results->isEmpty()) {
+            return response()->json(['error' => 'No location found'], 404);
+        }
+
+        // Nominatim returns NominatimAddress objects
+        $loc = $results->first();
+
+        return response()->json([
+            'display_name' => $loc->getDisplayName(), // correct method
+            'latitude' => $loc->getCoordinates()->getLatitude(),
+            'longitude' => $loc->getCoordinates()->getLongitude(),
+            'raw' => $loc->toArray() // optional: full raw data
+        ]);
+    }
+}
+
+```
+
+#### Explanation:
+
+Controller fetches address from query string, geocodes it, and returns JSON with full details.
+
+
+
+
+## STEP 7: Define Routes
+
+### Open: routes/web.php
+
+#### Add:
+
+```
+use App\Http\Controllers\GeocodersController;
+
+Route::get('/geocode', [GeocodersController::class, 'index']);
+
+```
+
+#### Explanation:
+
+Defines a GET route /geocode to call the geocoder controller.
+
+
+
+
+
+## STEP 8: Test
+
+### Run:
+
+```
+php artisan serve
+
+```
+
+### Then in browser:
+
+```
+http://127.0.0.1:8000/geocode?address=Statue+of+Liberty
+
+```
+
+### Expected output:
+
+
+<img width="1919" height="938" alt="Screenshot 2026-02-27 104245" src="https://github.com/user-attachments/assets/92b2d8b7-2d00-4066-bc73-4f3c55eab8aa" />
+
+
+---
+
+# Project Folder Structure:
+
+```
+PHP_Laravel12_Geocoders/
+├─ app/
+│  ├─ Http/
+│  │  ├─ Controllers/
+│  │  │  └─ GeocodersController.php
+│  └─ Models/
+├─ config/
+│  └─ geocoder.php
+├─ database/
+├─ public/
+├─ resources/
+├─ routes/
+│  └─ web.php
+├─ storage/
+├─ tests/
+├─ .env
+├─ composer.json
+├─ artisan
+└─ ...
+
+```
+
