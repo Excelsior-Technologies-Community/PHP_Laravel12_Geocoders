@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GeocodersController;
-use App\Models\SearchHistory;
 
 // Home redirect
 Route::get('/', function () {
@@ -15,7 +14,9 @@ Route::get('/search', [GeocodersController::class, 'form']);
 // Geocode API + UI result handler
 Route::get('/geocode', [GeocodersController::class, 'index']);
 
-// History API
-Route::get('/history', function () {
-    return SearchHistory::latest()->get();
-});
+
+// History routes
+Route::get('/history', [GeocodersController::class, 'getHistory']);
+Route::delete('/history/{id}', [GeocodersController::class, 'deleteHistory']);
+Route::delete('/history-clear', [GeocodersController::class, 'clearHistory']);
+Route::get('/export-csv', [GeocodersController::class, 'exportCsv']);
