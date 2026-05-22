@@ -13,5 +13,7 @@ class SearchHistory extends Model
         'address',
         'latitude',
         'longitude',
+        'display_name',
+        'search_type'
     ];
 }
