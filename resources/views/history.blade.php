@@ -51,14 +51,8 @@
             align-items: center;
             gap: 8px;
         }
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #27ae60; color: white; }
     </style>
 </head>
 <body>
@@ -66,9 +60,14 @@
         <div class="card">
             <div class="header">
                 <h1> Search History</h1>
-                <a href="/search" class="btn btn-primary">
-                     Back to Search
-                </a>
+                <div style="display: flex; gap: 10px;">
+                    <a href="/export-csv" class="btn btn-secondary">
+                        <i class="fas fa-file-csv"></i> Export CSV
+                    </a>
+                    <a href="/search" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Back to Search
+                    </a>
+                </div>
             </div>
             
             @if($history->count() > 0)

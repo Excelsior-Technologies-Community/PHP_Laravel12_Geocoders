@@ -12,14 +12,12 @@ use App\Models\SearchHistory;
 
 class GeocodersController extends Controller
 {
-    // SHOW FORM PAGE WITH HISTORY
     public function form()
     {
         $history = SearchHistory::latest()->take(10)->get();
         return view('geocode', compact('history'));
     }
 
-    // FORWARD GEOCODING
     public function index(Request $request)
     {
         $address = $request->get('address');
@@ -48,7 +46,6 @@ class GeocodersController extends Controller
             $latitude = $loc->getCoordinates()->getLatitude();
             $longitude = $loc->getCoordinates()->getLongitude();
 
-            // Save search history
             SearchHistory::create([
                 'address' => $address,
                 'latitude' => $latitude,
@@ -59,7 +56,6 @@ class GeocodersController extends Controller
 
             $history = SearchHistory::latest()->take(10)->get();
             
-            // Remove getURI() - it doesn't exist in this version
             $result = [
                 'display_name' => $loc->getDisplayName(),
                 'latitude' => $latitude,
@@ -81,7 +77,36 @@ class GeocodersController extends Controller
         }
     }
 
-    // REVERSE GEOCODING
+    public function bulkUpload(Request $request)
+    {
+        $request->validate(['csv_file' => 'required|file|mimes:csv,txt']);
+        
+        $file = $request->file('csv_file');
+        $data = array_map('str_getcsv', file($file->getRealPath()));
+        
+        $guzzle = new GuzzleClient();
+        $provider = Nominatim::withOpenStreetMapServer($guzzle, 'LaravelGeocoderApp/1.0');
+        $geocoder = new StatefulGeocoder($provider, 'en');
+
+        foreach ($data as $row) {
+            if (empty($row)) continue;
+            try {
+                $results = $geocoder->geocodeQuery(GeocodeQuery::create($row));
+                if (!$results->isEmpty()) {
+                    $loc = $results->first();
+                    SearchHistory::create([
+                        'address' => $row,
+                        'latitude' => $loc->getCoordinates()->getLatitude(),
+                        'longitude' => $loc->getCoordinates()->getLongitude(),
+                        'display_name' => $loc->getDisplayName(),
+                        'search_type' => 'bulk'
+                    ]);
+                }
+            } catch (\Exception $e) { continue; }
+        }
+        return back()->with('success', 'Bulk processing completed!');
+    }
+
     public function reverse(Request $request)
     {
         $request->validate([
@@ -105,7 +130,6 @@ class GeocodersController extends Controller
             $loc = $results->first();
             $address = $loc->getDisplayName();
 
-            // Save to history
             SearchHistory::create([
                 'address' => $address,
                 'latitude' => $request->latitude,
@@ -127,7 +151,6 @@ class GeocodersController extends Controller
         }
     }
 
-    // GET HISTORY
     public function getHistory(Request $request)
     {
         $limit = $request->get('limit', 20);
@@ -140,7 +163,6 @@ class GeocodersController extends Controller
         return view('history', compact('history'));
     }
 
-    // DELETE SINGLE HISTORY
     public function deleteHistory($id)
     {
         try {
@@ -160,7 +182,6 @@ class GeocodersController extends Controller
         }
     }
 
-    // CLEAR ALL HISTORY
     public function clearHistory()
     {
         SearchHistory::truncate();
@@ -172,7 +193,6 @@ class GeocodersController extends Controller
         return redirect('/search')->with('success', 'All search history cleared');
     }
 
-    // EXPORT TO CSV
     public function exportCsv()
     {
         $histories = SearchHistory::latest()->get();
@@ -180,10 +200,8 @@ class GeocodersController extends Controller
         $filename = 'geocoding_history_' . date('Y-m-d_H-i-s') . '.csv';
         $handle = fopen('php://temp', 'w');
         
-        // Add CSV headers
         fputcsv($handle, ['ID', 'Address', 'Display Name', 'Latitude', 'Longitude', 'Search Type', 'Searched At']);
         
-        // Add data rows
         foreach ($histories as $history) {
             fputcsv($handle, [
                 $history->id,
